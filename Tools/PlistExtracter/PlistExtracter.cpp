@@ -91,7 +91,7 @@ bool ParserPListFile(SharedPtr<PListFile> plist, HashMap<String, FrameInfo>& out
         IntRect rectangle = frameInfo["frame"]->GetIntRect(ratate);
         if (ratate)
         {
-            URHO3D_LOGERROR(name + " is ratated!");
+            URHO3D_LOGWARNING(name + " is ratated!");
         }
 
         Vector2 hotSpot(0.5f, 0.5f);
@@ -220,12 +220,19 @@ void Run(Vector<String>& arguments)
         return;
     }
 
+    String filePath;
     for (auto& var : sprites)
     {
         SharedPtr<Image> subImage(image->GetSubimage(var.second_.rect));
         if (subImage)
         {
-            subImage->SavePNG(outDir + var.first_);
+            inputfile = outDir + var.first_;
+            filePath = GetPath(inputfile);
+            if (!fileSystem->DirExists(filePath))
+            {
+                fileSystem->CreateDir(filePath);
+            }
+            subImage->SavePNG(inputfile);
         }
     }
 }
